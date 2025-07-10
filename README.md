@@ -7,11 +7,31 @@
 
 ### 功能展示
 
-![show](public\img\show.gif)
 
+<div align=center>
+<img  src="public/img/show.gif"/>
+</div>
+### 选择章节
+<div align=center>
+<img  src="public/img/A6.jpg"/>
+</div>
+### 添加词典
+<div align=center>
+<img  src="public/img/A1.jpg"/>
+</div>
 
+### 个人词典
+<div align=center>
+<img  src="public/img/A2.jpg"/>
+</div>
+<div align=center>
+<img  src="public/img/A4.jpg"/>
+</div>
 
-
+### 暗黑主题
+<div align=center>
+<img  src="public/img/A5.jpg"/>
+</div>
 
 ### 词库
 内置了常用的 CET-4 、CET-6 、GMAT 、GRE 、IELTS 、SAT 、TOEFL 、考研英语、专业四级英语、专业八级英语，也有程序员常见英语单词以及多种编程语言 API 等词库。 尽可能满足大部分用户对背单词的需求，也非常欢迎社区贡献更多的词库。
