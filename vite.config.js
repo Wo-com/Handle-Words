@@ -5,6 +5,10 @@ import path from 'path'
 // https://vite.dev/config/
 export default defineConfig({
   plugins: [vue()],
+  base: "/Handle-Words/",
+  build: {
+    outDir: 'docs'
+  },
   resolve: {
     // alias: [{ find: /^~/, replacement: "" }],
     alias: {

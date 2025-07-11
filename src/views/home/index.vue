@@ -12,7 +12,7 @@
         </div>
 
         <div class="word-spelling">
-            <WordSpelling :enwords="enSpellingWord" :cnwords="cnSpellingWord" @success="spelled"></WordSpelling>
+            <WordSpelling></WordSpelling>
         </div>
 
     </div>
@@ -42,26 +42,21 @@
 
 <script setup>
 import { ref, computed, onMounted } from 'vue';
+import WordSpelling from '@/views/spelling/wordspelling.vue';
+import DictName from '@/views/topTool/dictName.vue';
+import ChapterName from '@/views/topTool/chapterName.vue';
+import Setting from '@/views/topTool/Setting.vue';
+import ChapterWordCard from '@/views/rightCard/ChapterWordCard.vue';
+import Dicts from '@/views/vocabulary/AllDicts.vue';
+import MyDict from '@/views/vocabulary/MyDict.vue';
+import EditDict from '@/views/vocabulary/EditDict.vue';
 
-import DictName from '@/views/dict/topTool/dictName.vue';
-import ChapterName from '@/views/dict/topTool/chapterName.vue';
-import Setting from '@/views/dict/topTool/Setting.vue';
-
-import Dicts from '@/views/dict/Dicts.vue';
-import MyDict from '@/views/dict/MyDict.vue';
-import EditDict from '@/views/dict/EditDict.vue';
 import { useBaseStore } from '@/stores/base';
-import WordSpelling from '@/components/wordspelling.vue';
-
-import ChapterWordCard from '@/views/dict/rightCard/ChapterWordCard.vue';
-import { ElMessage } from 'element-plus'
 
 const store = useBaseStore()
 const showSelectDict = ref(false)
 const showMyDict = ref(false)
 const showEditDict = ref(false)
-
-
 const practiceDict = (dict) => {
     showMyDict.value = false
 }
@@ -85,28 +80,6 @@ const clickCurrentDictName = () => {
 const selectDictToMyDict = () => {
     showSelectDict.value = false
 }
-
-
-
-
-const enSpellingWord = computed(() => {
-    return store.currentChapter[store.currentChapterWordIndex]?.name
-})
-const cnSpellingWord = computed(() => {
-    return store.currentChapter[store.currentChapterWordIndex]?.trans
-})
-const spelled = () => {
-    if (store.currentChapterWordIndex < store.currentChapter.length - 1) {
-        store.changeWord(store.currentChapterWordIndex + 1)
-    } else {
-        ElMessage.success("恭喜你，本章已学完")
-    }
-}
-
-
-
-
-
 
 
 onMounted(() => {
@@ -143,7 +116,6 @@ onMounted(() => {
 .select-dict {
     width: 100%;
     max-height: 550px;
-    // border: 1px solid #ccc;
     overflow: auto;
     border-radius: 10px;
 }
@@ -151,7 +123,6 @@ onMounted(() => {
 .my-dict {
     width: 100%;
     max-height: 500px;
-    // border: 1px solid #ccc;
     overflow: auto;
     border-radius: 10px;
 }

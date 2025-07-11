@@ -1,16 +1,6 @@
-// import localforage from "localforage";
-import { SAVE_DICT_KEY, SAVE_SETTING_KEY } from "@/utils/const.js";
+import { SAVE_DICT_KEY } from "@/utils/const.js";
 import { DefaultBaseState } from "@/stores/base";
-// import { DefaultSettingState } from "@/stores/setting.js";
-import { cloneDeep } from "lodash-es";
 
-export function getRandom(a, b) {
-    return Math.random() * (b - a) + a;
-}
-
-export function no() {
-    ElMessage.warning('未实现');
-}
 
 //读取词典数据
 export function checkAndUpgradeSaveDict(val) {

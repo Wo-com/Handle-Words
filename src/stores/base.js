@@ -2,12 +2,15 @@
 import { defineStore } from "pinia";
 import { chunk, cloneDeep, merge } from "lodash-es";
 import { nanoid } from "nanoid";
-import { SAVE_DICT_KEY, SAVE_SETTING_KEY } from "@/utils/const.js";
+import { saveAs } from "file-saver";
+import { APP_NAME, SAVE_DICT_KEY } from "@/utils/const.js";
 import { dictionaryResources } from "@/assets/dictionary.js";
 import { checkAndUpgradeSaveDict } from "@/utils/index.js";
 import * as localforage from "localforage";
 import { DefaultDict } from "@/utils/const.js";
 import { useRuntimeStore } from "./runtime";
+import { ElMessage } from "element-plus";
+import { PronunciationApi } from "@/utils/const.js";
 
 export const DefaultBaseState = () => ({
   myDictList: [
@@ -37,9 +40,11 @@ export const DefaultBaseState = () => ({
   collectWords: [], //收藏的词汇
 
   lightTheme: true, //主题 默认白色
-  activeCardPosition: 'start', //激活卡片位置  start:上 , center:中 , end:下
-  showWordCard: true, //是否显示单词卡 
-  wordSoundType: 'us', //发音  us:美音 , uk:英音
+  activeCardPosition: "start", //激活卡片位置  start:上 , center:中 , end:下
+  showWordCard: true, //是否显示单词卡
+  wordSoundType: "us", //发音  us:美音 , uk:英音
+  hideGraspWords: false, //是否隐藏掌握的单词
+  hideCollectWords: false, //是否隐藏收藏的单词
 });
 
 export const useBaseStore = defineStore("base", {
@@ -56,6 +61,9 @@ export const useBaseStore = defineStore("base", {
     },
     currentChapterName(state) {
       return `第${this.currentChapterIndex + 1}章`;
+    },
+    currentWord(state) {
+      return this.currentChapter[this.currentChapterWordIndex] ?? {};
     },
   },
   actions: {
@@ -114,8 +122,6 @@ export const useBaseStore = defineStore("base", {
           );
         } catch (e) {
           console.error("读取本地dict数据失败", e);
-        } finally {
-          console.log("本地词典", this.$state);
         }
         resolve(true);
       });
@@ -159,6 +165,14 @@ export const useBaseStore = defineStore("base", {
       this.collectWords = this.collectWords.filter((v) => v.id !== word.id);
       this.setCollectWords();
     },
+    // 是否掌握
+    isGrasp(item) {
+      return this.graspWords.find((v) => v.name === item?.name);
+    },
+    // 是否收藏
+    isCollect(item) {
+      return this.collectWords.find((v) => v.name === item?.name);
+    },
     // 设置已掌握的词汇
     setGraspWords() {
       const dict = this.myDictList.find((v) => v.id === "grasp");
@@ -186,8 +200,6 @@ export const useBaseStore = defineStore("base", {
       this.currentDictIndex = rIndex;
       this.currentChapterIndex = dict.historyChapterIndex ?? 0; //读取历史章节下标
       this.currentChapterWordIndex = dict.historyWordIndex ?? 0; //读取历史单词下标
-
-      console.log("切换字典", rIndex, dict);
     },
 
     // 切换章节
@@ -200,6 +212,52 @@ export const useBaseStore = defineStore("base", {
     changeWord(index) {
       this.currentChapterWordIndex = index;
       this.currentDict.historyWordIndex = index; //记录单词下标 历史
+    },
+
+    // 下一个单词
+    nextWord() {
+      let nextIndex = this.currentChapterWordIndex + 1;
+      let length = this.currentChapter.length;
+      if (this.hideGraspWords || this.hideCollectWords) {
+          for (let i = nextIndex; i < length; i++) {
+              if (this.hideGraspWords && this.isGrasp(this.currentChapter[i])) {
+                  //跳过已掌握的单词
+                  nextIndex++;
+              } else if (this.hideCollectWords && this.isCollect(this.currentChapter[i])) {
+                  //跳过已收藏的单词
+                  nextIndex++;
+              } else {
+                  break;
+              }
+          }
+      }
+      if (nextIndex === length) {
+          ElMessage.success("恭喜你，本章已学完")
+          return;
+      }
+      this.changeWord(nextIndex)
+      this.playSound(this.currentWord.name)
+    },
+
+    // 播放单词发音
+    playSound(word) {
+      const audio = new Audio();
+      if (this.wordSoundType === "uk") {
+        audio.src = `${PronunciationApi}${word}&type=1`;
+      } else if (this.wordSoundType === "us") {
+        audio.src = `${PronunciationApi}${word}&type=2`;
+      }
+      audio.play().then((r) => void 0);
+    },
+
+    // 编辑字典
+    updateDict(newDict) {
+      const oldDict = this.myDictList.find((item) => item.id === newDict.id);
+      oldDict.chapterWords = newDict.chapterWords;
+      oldDict.name = newDict.name;
+      oldDict.description = newDict.description;
+      oldDict.chapterWordNum = newDict.chapterWordNum;
+      oldDict.wordOrder = newDict.wordOrder;
     },
 
     async loadDict(val) {
@@ -245,6 +303,39 @@ export const useBaseStore = defineStore("base", {
         }
       }
       return runtimeStore.editDict;
+    },
+
+    // 导出数据
+    exportData() {
+      let data = {
+        version: "1.0.1",
+        val: this.$state,
+      };
+      let blob = new Blob([JSON.stringify(data)], {
+        type: "text/plain;charset=utf-8",
+      });
+      let date = new Date();
+      let dateStr = `${date.getFullYear()}-${
+        date.getMonth() + 1
+      }-${date.getDate()} ${date.getHours()}-${date.getMinutes()}-${date.getSeconds()}`;
+      saveAs(blob, `${APP_NAME}-User-Data-${dateStr}.json`);
+    },
+
+    // 导入数据
+    importData() {
+      const input = document.createElement("input");
+      input.type = "file";
+      input.accept = ".json";
+      input.onchange = (e) => {
+        const file = e.target.files[0];
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          const data = JSON.parse(e.target.result);
+          this.setState(data.val);
+        };
+        reader.readAsText(file);
+      };
+      input.click();
     },
   },
 });

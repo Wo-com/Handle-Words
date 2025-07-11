@@ -21,7 +21,6 @@ async function init() {
 
 //保存词典到本地
 watch(store.$state, (n) => {
-  console.log("保存词典到本地", n)
   localforage.setItem(SAVE_DICT_KEY.key, JSON.stringify({val: n, version: SAVE_DICT_KEY.version}))
 })
 
