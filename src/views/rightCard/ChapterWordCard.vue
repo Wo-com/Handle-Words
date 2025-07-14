@@ -17,6 +17,13 @@
                         </el-icon>
                     </div>
                 </div>
+                <div class="word-sound">
+                    <div v-if="store.wordSoundType=='us'"> {{ item.usphone }}</div>
+                    <div v-if="store.wordSoundType=='uk'"> {{ item.ukphone }}</div>
+                        <el-icon>
+                            <VideoPlay @click.stop="playSound(item.name)" />
+                        </el-icon>
+                    </div>
                 <div class="word-card-item-content">
                     <div class="word-card-item-content-item" v-for="(transition, trans_index) in item.trans"
                         :key="trans_index">
@@ -30,7 +37,7 @@
 <script setup>
 import { useBaseStore } from '@/stores/base';
 import { computed, watchEffect, onMounted } from 'vue';
-import { CircleCheck, CircleCheckFilled, Star, StarFilled } from '@element-plus/icons-vue';
+import { CircleCheck, CircleCheckFilled, Star, StarFilled, VideoPlay } from '@element-plus/icons-vue';
 import { ElMessage } from 'element-plus';
 
 const store = useBaseStore()
@@ -43,6 +50,11 @@ const chapterWords = computed(() => {
 // 点击 激活单词
 const handleClick = (word_index) => {
     store.changeWord(word_index)
+}
+
+// 播放单词发音
+const playSound = (word) => {
+    store.playSound(word)
 }
 
 // 掌握单词
@@ -119,4 +131,11 @@ watchEffect(() => {
         }
     }
 }
+
+.word-sound {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
 </style>

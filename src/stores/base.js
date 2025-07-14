@@ -56,13 +56,13 @@ export const useBaseStore = defineStore("base", {
     currentDict() {
       return this.myDictList[this.currentDictIndex];
     },
-    currentChapter(state) {
+    currentChapter() {
       return this.currentDict.chapterWords[this.currentChapterIndex] ?? [];
     },
-    currentChapterName(state) {
+    currentChapterName() {
       return `第${this.currentChapterIndex + 1}章`;
     },
-    currentWord(state) {
+    currentWord() {
       return this.currentChapter[this.currentChapterWordIndex] ?? {};
     },
   },
@@ -77,13 +77,11 @@ export const useBaseStore = defineStore("base", {
         //初始化翻译词库
         const runtimeStore = useRuntimeStore();
         if (!runtimeStore.translateWordList.length) {
-          setTimeout(async () => {
-            let r2 = await fetch("./translate/en2zh_CN-min.json");
-            let list = await r2.json();
-            if (list && list.length) {
-              runtimeStore.translateWordList = list;
-            }
-          });
+          let r2 = await fetch("./translate/en2zh_CN-min.json");
+          let list = await r2.json();
+          if (list && list.length) {
+            runtimeStore.translateWordList = list;
+          }
         }
         //初始化已掌握的词汇
         if (!this.graspWords.length) {
@@ -219,21 +217,21 @@ export const useBaseStore = defineStore("base", {
       let nextIndex = this.currentChapterWordIndex + 1;
       let length = this.currentChapter.length;
       if (this.hideGraspWords || this.hideCollectWords) {
-          for (let i = nextIndex; i < length; i++) {
-              if (this.hideGraspWords && this.isGrasp(this.currentChapter[i])) {
-                  //跳过已掌握的单词
-                  nextIndex++;
-              } else if (this.hideCollectWords && this.isCollect(this.currentChapter[i])) {
-                  //跳过已收藏的单词
-                  nextIndex++;
-              } else {
-                  break;
-              }
+        for (let i = nextIndex; i < length; i++) {
+          if (this.hideGraspWords && this.isGrasp(this.currentChapter[i])) {
+            //跳过已掌握的单词
+            nextIndex++;
+          } else if (this.hideCollectWords && this.isCollect(this.currentChapter[i])) {
+            //跳过已收藏的单词
+            nextIndex++;
+          } else {
+            break;
           }
+        }
       }
       if (nextIndex === length) {
-          ElMessage.success("恭喜你，本章已学完")
-          return;
+        ElMessage.success("恭喜你，本章已学完")
+        return;
       }
       this.changeWord(nextIndex)
       this.playSound(this.currentWord.name)
@@ -315,9 +313,8 @@ export const useBaseStore = defineStore("base", {
         type: "text/plain;charset=utf-8",
       });
       let date = new Date();
-      let dateStr = `${date.getFullYear()}-${
-        date.getMonth() + 1
-      }-${date.getDate()} ${date.getHours()}-${date.getMinutes()}-${date.getSeconds()}`;
+      let dateStr = `${date.getFullYear()}-${date.getMonth() + 1
+        }-${date.getDate()} ${date.getHours()}-${date.getMinutes()}-${date.getSeconds()}`;
       saveAs(blob, `${APP_NAME}-User-Data-${dateStr}.json`);
     },
 

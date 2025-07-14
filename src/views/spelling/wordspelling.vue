@@ -34,6 +34,9 @@ const wordList = computed(() => store.currentWord.name?.split(' '))
 
 // 存储用户输入的单词
 const inputeCharacters = ref(wordList.value?.map(() => ''))
+watch(wordList, (newVal) => {
+    inputeCharacters.value = newVal?.map(() => '')
+})
 
 // 当前输入的单词索引
 const currentIndex = ref(0)
@@ -142,7 +145,7 @@ const resetComponent = () => {
 }
 
 // 监听所有props变化（更全面的重置）
-watch(() => store.currentChapterWordIndex, (newProps) => {
+watch(() => store.currentChapterWordIndex, () => {
     resetComponent();
 });
 
