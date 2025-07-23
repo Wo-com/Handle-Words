@@ -76,7 +76,7 @@
   },
 ```
 
-
+v1.0.1
 
 ### 特别感谢：
 [typing-word](https://github.com/zyronon/typing-word)
