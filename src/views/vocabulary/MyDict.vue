@@ -5,9 +5,14 @@
             <div class="dict-top-name">{{ dict.name }}</div>
             <div class="dict-center">
                 <div class="dict-description">{{ dict.description }}</div>
-                <div class="dict-length">{{ dict.length }} 词</div>
             </div>
- 
+
+            <div class="count-dict">
+                <div v-if="dict.type === 'word'" class="dict-length">总计{{ dict.length }} 词</div>
+                <div v-if="dict.type === 'word'" class="dict-length">掌握{{ getGraspNum(dict) }} 词</div>
+            </div>
+
+        
             <div class="dict-bottom">
                 <div  class="dict-tool">
                     <el-icon  @click.stop="handleClickEdit(dict)">
@@ -58,6 +63,14 @@ const handleClickDelete = (dict) => {
     const lastDict = store.myDictList[store.myDictList.length - 1]
     store.changeDict(lastDict)
 }
+
+// 获取已掌握词数
+const getGraspNum = (dict) => {
+    return dict.chapterWords.reduce((acc, curr) => {
+        return acc + curr.filter(item => store.isGrasp(item)).length
+    }, 0)
+}
+
 
 // 拖拽
 useDraggable(el, store.myDictList, {
@@ -127,6 +140,10 @@ onMounted(() => {
     color: #666;
 }
 
+.count-dict{
+    height: 30px;
+}
+
 .dict-length{
     font-size: 12px;
     color: #666;
@@ -139,9 +156,9 @@ onMounted(() => {
 }
 
 .dict-tool {
-    width: 40px;
+    width: 60px;
     display: flex;
-    justify-content: space-between;
+    justify-content: space-around;
     align-items: center;
 }
 </style>
