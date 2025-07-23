@@ -113,6 +113,7 @@ const handleChapterWordNumChange = (value) => {
 
 //保存修改
 const handleEditDictFinish = () => {
+    tempDict.value.length = dictWords.length;
     store.updateDict(tempDict.value)
     emit('editDictFinish', tempDict.value)
     ElMessage.success('修改成功')
