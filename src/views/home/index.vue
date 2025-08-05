@@ -2,7 +2,7 @@
     <div class="container">
 
         <div class="header">
-            <DictName @clickCurrentDictName="clickCurrentDictName" />
+            <DictName />
             <ChapterName />
             <Setting />
         </div>
@@ -17,23 +17,22 @@
 
     </div>
 
-    <el-dialog v-model="showMyDict" :width="1000" title="">
+    <el-dialog v-model="store.showMyDict" :width="1000" title="">
         <div class="my-dict">
-            <MyDict @addDict="showSelectDict = true" @editDict="handleEditDict" @practiceDict="practiceDict" />
+            <MyDict  @editDict="handleEditDict" />
         </div>
     </el-dialog>
 
-
-    <el-dialog v-model="showSelectDict" :width="1000" title="">
+    <el-dialog v-model="store.showSelectDict" :width="1000" title="">
         <div class="select-dict">
-            <Dicts @selectDictToMyDict="selectDictToMyDict" />
+            <Dicts/>
         </div>
     </el-dialog>
 
-    <el-dialog v-model="showEditDict" :close-on-click-modal="false" :close-on-press-escape="false" :width="1000"
+    <el-dialog v-model="store.showEditDict" :close-on-click-modal="false" :close-on-press-escape="false" :width="1000"
         title="">
         <div class="edit-dict">
-            <EditDict :editDict="editDict" @editDictFinish="editDictFinish" />
+            <EditDict :editDict="editDict" />
         </div>
     </el-dialog>
 
@@ -50,35 +49,13 @@ import ChapterWordCard from '@/views/rightCard/ChapterWordCard.vue';
 import Dicts from '@/views/vocabulary/AllDicts.vue';
 import MyDict from '@/views/vocabulary/MyDict.vue';
 import EditDict from '@/views/vocabulary/EditDict.vue';
-
 import { useBaseStore } from '@/stores/base';
 
 const store = useBaseStore()
-const showSelectDict = ref(false)
-const showMyDict = ref(false)
-const showEditDict = ref(false)
-const practiceDict = (dict) => {
-    showMyDict.value = false
-}
-
 const editDict = ref({})
+
 const handleEditDict = (dict) => {
     editDict.value = dict
-    showEditDict.value = true
-}
-const editDictFinish = (dict) => {
-    showEditDict.value = false
-}
-
-
-const clickCurrentDictName = () => {
-    showMyDict.value = true
-}
-
-
-// 选择字典 新增学习的词典
-const selectDictToMyDict = () => {
-    showSelectDict.value = false
 }
 
 

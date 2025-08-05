@@ -151,20 +151,20 @@ watch(() => store.currentChapterWordIndex, () => {
 
 
 //监听键盘事件 focus input
-// onMounted(() => {
-//     window.addEventListener('keydown', (e) => {
-//         if (inputRef.value) {
-//             inputRef.value.focus()
-//         }
-//     })
-// })
-// onUnmounted(() => {
-//     window.removeEventListener('keydown', (e) => {
-//         if (inputRef.value) {
-//             inputRef.value.focus()
-//         }
-//     })
-// })
+onMounted(() => {
+    window.addEventListener('keydown', (e) => {
+        if (inputRef.value && !(store.showEditDict || store.showMyDict || store.showSelectDict)) {
+            inputRef.value.focus()
+        }
+    })
+})
+onUnmounted(() => {
+    window.removeEventListener('keydown', (e) => {
+        if (inputRef.value) {
+            inputRef.value.focus()
+        }
+    })
+})
 
 </script>
 

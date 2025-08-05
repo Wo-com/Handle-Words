@@ -41,10 +41,14 @@ export const DefaultBaseState = () => ({
 
   lightTheme: true, //主题 默认白色
   activeCardPosition: "start", //激活卡片位置  start:上 , center:中 , end:下
-  showWordCard: true, //是否显示单词卡
   wordSoundType: "us", //发音  us:美音 , uk:英音
   hideGraspWords: false, //是否隐藏掌握的单词
   hideCollectWords: false, //是否隐藏收藏的单词
+
+  showWordCard: true, //是否显示单词卡
+  showSelectDict: false, //是否显示选择词典弹窗
+  showMyDict: false, //是否显示我的词典弹窗
+  showEditDict: false, //是否显示编辑词典弹窗
 });
 
 export const useBaseStore = defineStore("base", {
@@ -70,6 +74,19 @@ export const useBaseStore = defineStore("base", {
     setState(obj) {
       //这样不会丢失watch的值的引用
       merge(this, obj);
+    },
+
+    // 显示选择词典弹窗
+    isShowSelectDict(val) {
+      this.showSelectDict = val
+    },
+    // 显示我的词典弹窗
+    isShowMyDict(val) {
+      this.showMyDict = val
+    },
+    // 显示编辑词典弹窗
+    isShowEditDict(val) {
+      this.showEditDict = val
     },
 
     async init(outData) {

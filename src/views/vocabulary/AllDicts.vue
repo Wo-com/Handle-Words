@@ -38,7 +38,6 @@ import { useBaseStore } from '@/stores/base'
 import { ElLoading } from 'element-plus'
 import { startLoading, endLoading } from '@/utils/loding'
 
-const emit = defineEmits(['selectDict', 'selectDictToMyDict'])
 const store = useBaseStore()
 
 //分类切换状态管理
@@ -87,7 +86,7 @@ const handleBigTypeChange = (tab) => {
 
 // 添加学习
 const handleClickDict = async (dict) => {
-  emit('selectDictToMyDict', dict)
+  store.isShowSelectDict(false)
   startLoading("正在加载...")
   const editDict = await store.loadDict(dict)
   store.addDict(editDict)

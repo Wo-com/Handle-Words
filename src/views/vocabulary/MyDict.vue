@@ -8,7 +8,7 @@
             </div>
 
             <div class="count-dict">
-                <div v-if="dict.type === 'word'" class="dict-length">总计{{ dict.length }} 词</div>
+                <div  class="dict-length">总计{{ dict.length }} 词</div>
                 <div v-if="dict.type === 'word'" class="dict-length">掌握{{ getGraspNum(dict) }} 词</div>
             </div>
 
@@ -24,7 +24,7 @@
                 </div>
             </div>
         </div>
-        <div class="dict-item" @click="emit('addDict')">
+        <div class="dict-item" @click="addDict">
             <div class="dict-add">
                 <el-icon>
                     <Plus />
@@ -43,17 +43,18 @@ import { useDraggable } from 'vue-draggable-plus'
 const el = ref()
 
 const store = useBaseStore()
-const emit = defineEmits(['addDict', 'editDict', 'practiceDict'])
+const emit = defineEmits(['editDict'])
 
 
 // 点击我的词典 切换当前词典
 const handleClickMyDict = async (dict) => {
-    emit('practiceDict', dict)
+    store.isShowMyDict(false)
     store.changeDict(dict)
 }
 
 // 编辑词典
 const handleClickEdit = (dict) => {
+    store.isShowEditDict(true)
     emit('editDict', cloneDeep(dict))
 }
 
@@ -70,7 +71,6 @@ const getGraspNum = (dict) => {
         return acc + curr.filter(item => store.isGrasp(item)).length
     }, 0)
 }
-
 
 // 拖拽
 useDraggable(el, store.myDictList, {

@@ -69,7 +69,6 @@ import { useBaseStore } from '@/stores/base'
 import { ElMessage } from 'element-plus'
 
 const store = useBaseStore()
-const emit = defineEmits(['editDictFinish'])
 
 const props = defineProps({
     editDict: {
@@ -115,7 +114,7 @@ const handleChapterWordNumChange = (value) => {
 const handleEditDictFinish = () => {
     tempDict.value.length = dictWords.length;
     store.updateDict(tempDict.value)
-    emit('editDictFinish', tempDict.value)
+    store.isShowEditDict(false)
     ElMessage.success('修改成功')
 }
 
